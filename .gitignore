@@ -1,0 +1,12 @@
+# Specify filepatterns you want git to ignore.
+
+*.db*
+*.opendb
+*.ipch
+*.*log*
+*.pdb
+*.exe*
+*.suo
+*.obj
+*.idb
+*.ilk
