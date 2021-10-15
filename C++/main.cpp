@@ -5,7 +5,8 @@ int main() {
 	SinglyLinkedList<int> t{ arr, 7 };
 	auto p = t.pop();
 	auto y = t.count(4);
-	auto z = t.get(6);
+	auto z = t.index(5);
+	t.insert(2, 10);
 	int x = 1;
 	return 0;
 }

@@ -23,7 +23,7 @@ public:
 	SinglyLinkedList(T arr[], int size) {
 		for (auto idx = 0; idx < size; ++idx)
 			append(arr[idx]);
-	};
+	}
 
 	void append(T data) {
 		std::shared_ptr<Node> node{ std::make_shared<Node>(data) };
@@ -39,6 +39,7 @@ public:
 
 		++(m_size);
 	};
+	
 	T pop(std::optional<int> index = std::nullopt) {
 		auto current = m_head;
 		std::shared_ptr<Node> prev{ nullptr };
@@ -75,12 +76,15 @@ public:
 		return current->m_data;
 		
 	}
+	
 	size_t size() { return m_size; }
+	
 	void clear() {
 		m_head.reset();
 		m_tail.reset();
 		m_size = 0;
 	}
+	
 	int count(T data) {
 		int cnt{ 0 };
 		auto current = m_head;
@@ -95,7 +99,7 @@ public:
 
 	}
 	
-	T get(int index) {
+	T index(size_t index) {
 		if (index > m_size - 1)
 			throw std::exception("Error");
 
@@ -104,10 +108,45 @@ public:
 		
 		while (current) {
 			if (position == index)
-				return current->m_data;
+				break;
 			
 			current = current->next;
 			++position;
 		}
+
+		return current->m_data;
 	};
+	
+	void insert(int index, T data) {
+		auto node{ std::make_shared<Node>(data) };
+		auto current = m_head;
+		std::shared_ptr<Node> prev{ nullptr };
+		
+		int position{ 0 };
+
+		while (current) {
+			if (position == index) {
+				break;
+			}
+			else {
+				prev = current;
+				current = current->next;
+				++position;
+			}
+		}
+
+		if (prev) {
+			node->next = current;
+			prev->next = node;
+			current = node;
+		}
+		else {
+			node->next = current;
+			m_head = node;
+		}
+
+		++m_size;
+	}
+
+
 };
