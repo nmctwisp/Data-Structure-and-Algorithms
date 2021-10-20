@@ -173,7 +173,9 @@ T SinglyLinkedList<T>::pop(std::optional<T> index) {
 		}
 
 		prev->next = current->next;
-		m_tail = prev;
+
+		if (!prev->next)
+			m_tail = prev;
 	}
 
 	--m_size;
