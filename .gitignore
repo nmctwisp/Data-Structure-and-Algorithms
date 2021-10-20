@@ -10,3 +10,5 @@
 *.obj
 *.idb
 *.ilk
+Debug/
+Release/
