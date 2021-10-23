@@ -135,10 +135,13 @@ void DoublyLinkedList<T>::insert(int index, T data) {
 
 	if (prev) {
 		node->next = current;
+		node->prev = prev;
 		prev->next = node;
+		current->prev = node;
 		current = node;
 	}
 	else {
+		current->prev = node;
 		node->next = current;
 		m_head = node;
 	}
@@ -175,7 +178,11 @@ T DoublyLinkedList<T>::pop(std::optional<T> index) {
 		}
 
 		prev->next = current->next;
-		m_tail = prev;
+
+		if (prev->next)
+			prev->next->prev = prev;
+		else
+			m_tail = prev;
 	}
 
 	--m_size;
@@ -187,19 +194,21 @@ T DoublyLinkedList<T>::pop(std::optional<T> index) {
 template <typename T>
 void DoublyLinkedList<T>::remove(T data) {
 	auto current = m_head;
-	auto prev = m_head;
+	auto prev = m_head->prev;
 
 	while (current) {
 		if (current->m_data == data) {
 
-			if (current == m_head)
+			if (current == m_head) {
+				current->next->prev = prev;
 				m_head = current->next;
-
+			}
 			else if (current == m_tail) {
 				prev->next = current->next;
 				m_tail = prev;
 			}
 			else
+				current->next->prev = prev;
 				prev->next = current->next;
 
 			--m_size;
