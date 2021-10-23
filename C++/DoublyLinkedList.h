@@ -16,9 +16,13 @@ public:
 	DoublyLinkedList<T>(T arr[], int size);
 
 	class Iterator;
+	class Reverse_Iterator;
 
 	Iterator begin();
 	Iterator end();
+
+	Reverse_Iterator rbegin();
+	Reverse_Iterator rend();
 
 	void append(T data);
 	void insert(int index, T data);
@@ -80,7 +84,7 @@ public:
 		return m_current != iterator.m_current;
 	}
 
-	int operator*() {
+	T operator*() {
 		return m_current->m_data;
 	}
 };
@@ -95,6 +99,61 @@ template <typename T>
 typename DoublyLinkedList<T>::Iterator DoublyLinkedList<T>::end() {
 
 	return Iterator(m_tail->next);
+}
+
+template <typename T>
+class DoublyLinkedList<T>::Reverse_Iterator {
+public:
+	std::shared_ptr<DoublyLinkedList<T>::Node> m_current{ nullptr };
+	Reverse_Iterator(const std::shared_ptr<DoublyLinkedList<T>::Node> node) noexcept :
+		m_current(node) {};
+
+	
+	DoublyLinkedList<T>::Reverse_Iterator& operator=(std::shared_ptr<DoublyLinkedList<T>::Node> node) {
+		
+		m_current = node;
+		
+		return *this;
+	}
+
+	DoublyLinkedList<T>::Reverse_Iterator& operator++() {
+		
+		if (m_current)
+			m_current = m_current->prev;
+
+		return *this;
+	}
+
+	DoublyLinkedList<T>::Reverse_Iterator& operator++(int) {
+		
+		Reverse_Iterator riterator = *this;
+		++* this;
+
+		return riterator;
+	}
+
+	bool operator!=(const DoublyLinkedList<T>::Reverse_Iterator& riterator) {
+
+		return m_current != riterator.m_current;
+
+	}
+
+	T operator*() {
+		
+		return m_current->m_data;
+	}
+};
+
+template <typename T>
+typename DoublyLinkedList<T>::Reverse_Iterator DoublyLinkedList<T>::rbegin() {
+
+	return Reverse_Iterator(m_tail);
+}
+
+template <typename T>
+typename DoublyLinkedList<T>::Reverse_Iterator DoublyLinkedList<T>::rend() {
+
+	return Reverse_Iterator(m_head->prev);
 }
 
 template <typename T>
@@ -207,9 +266,10 @@ void DoublyLinkedList<T>::remove(T data) {
 				prev->next = current->next;
 				m_tail = prev;
 			}
-			else
+			else {
 				current->next->prev = prev;
 				prev->next = current->next;
+			}
 
 			--m_size;
 			return;
@@ -223,19 +283,23 @@ void DoublyLinkedList<T>::remove(T data) {
 template <typename T>
 void DoublyLinkedList<T>::remove_all(T data) {
 	auto current = m_head;
-	auto prev = m_head;
+	auto prev = m_head->prev;
 
 	while (current) {
 		if (current->m_data == data) {
 
-			if (current == m_head)
+			if (current == m_head) {
+				current->next->prev = prev;
 				m_head = current->next;
+			}
 			else if (current == m_tail) {
 				prev->next = current->next;
 				m_tail = prev;
 			}
-			else
+			else {
+				current->next->prev = prev;
 				prev->next = current->next;
+			}
 
 			--m_size;
 		}

@@ -79,7 +79,7 @@ public:
 		return m_current != iterator.m_current;
 	}
 
-	int operator*() {
+	T operator*() {
 		return m_current->m_data;
 	}
 };
