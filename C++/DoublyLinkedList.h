@@ -22,7 +22,7 @@ public:
 
 	void append(T data);
 	void insert(int index, T data);
-	T pop(std::optional<T> index = std::nullopt);
+	T pop(std::optional<size_t> index = std::nullopt);
 	void remove(T data);
 	void remove_all(T data);
 	T index(size_t index);
@@ -150,7 +150,7 @@ void DoublyLinkedList<T>::insert(int index, T data) {
 }
 
 template <typename T>
-T DoublyLinkedList<T>::pop(std::optional<T> index) {
+T DoublyLinkedList<T>::pop(std::optional<size_t> index) {
 	auto current = m_head;
 	std::shared_ptr<Node> prev{ nullptr };
 	int position{ 0 };
