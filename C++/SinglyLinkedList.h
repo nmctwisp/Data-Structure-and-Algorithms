@@ -27,8 +27,8 @@ public:
 	int count(T data);
 	void clear();
 	size_t size();
-	std::shared_ptr<Node> head() const;
-	std::shared_ptr<Node> tail() const;
+	std::shared_ptr<Node> front() const;
+	std::shared_ptr<Node> back() const;
 };
 
 template <typename T>
@@ -287,11 +287,11 @@ size_t SinglyLinkedList<T>::size() {
 }
 
 template <typename T>
-std::shared_ptr<typename SinglyLinkedList<T>::Node> SinglyLinkedList<T>::head() const {
+std::shared_ptr<typename SinglyLinkedList<T>::Node> SinglyLinkedList<T>::front() const {
 	return m_head;
 }
 
 template <typename T>
-std::shared_ptr<typename SinglyLinkedList<T>::Node> SinglyLinkedList<T>::tail() const {
+std::shared_ptr<typename SinglyLinkedList<T>::Node> SinglyLinkedList<T>::back() const {
 	return m_tail;
 }
