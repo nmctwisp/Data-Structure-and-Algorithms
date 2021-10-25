@@ -4,9 +4,9 @@
 
 template <typename T>
 class SinglyLinkedList {
-
+public:
 	class Node;
-
+	class Iterator;
 private:
 	size_t m_size{ 0 };
 	std::shared_ptr<Node> m_head{ nullptr };
@@ -14,8 +14,6 @@ private:
 public:
 	SinglyLinkedList<T>() {};
 	SinglyLinkedList<T>(T arr[], int size);
-
-	class Iterator;
 
 	Iterator begin();
 	Iterator end();
@@ -29,6 +27,8 @@ public:
 	int count(T data);
 	void clear();
 	size_t size();
+	std::shared_ptr<Node> head() const;
+	std::shared_ptr<Node> tail() const;
 };
 
 template <typename T>
@@ -42,9 +42,12 @@ class SinglyLinkedList<T>::Node {
 	friend class SinglyLinkedList;
 private:
 	T m_data;
-	std::shared_ptr<Node> next{ nullptr };
+	std::shared_ptr<Node> m_next{ nullptr };
 public:
+	Node() {};
 	Node(T value) : m_data(value) {};
+	T data() { return m_data; }
+	std::shared_ptr<Node> next() { return m_next; }
 };
 
 template <typename T>
@@ -61,7 +64,7 @@ public:
 	// prefix operator
 	SinglyLinkedList<T>::Iterator& operator++() {
 		if (m_current)
-			m_current = m_current->next;
+			m_current = m_current->m_next;
 
 		return *this;
 	};
@@ -79,8 +82,8 @@ public:
 		return m_current != iterator.m_current;
 	}
 
-	T operator*() {
-		return m_current->m_data;
+	std::shared_ptr<Node> operator*() {
+		return m_current;
 	}
 };
 
@@ -93,7 +96,7 @@ typename SinglyLinkedList<T>::Iterator SinglyLinkedList<T>::begin() {
 template <typename T>
 typename SinglyLinkedList<T>::Iterator SinglyLinkedList<T>::end() {
 
-	return Iterator(m_tail->next);
+	return Iterator(m_tail->m_next);
 }
 
 template <typename T>
@@ -105,7 +108,7 @@ void SinglyLinkedList<T>::append(T data) {
 		m_tail = node;
 	}
 	else {
-		m_tail->next = node;
+		m_tail->m_next = node;
 		m_tail = node;
 	}
 
@@ -126,18 +129,18 @@ void SinglyLinkedList<T>::insert(int index, T data) {
 		}
 		else {
 			prev = current;
-			current = current->next;
+			current = current->m_next;
 			++position;
 		}
 	}
 
 	if (prev) {
-		node->next = current;
-		prev->next = node;
+		node->m_next = current;
+		prev->m_next = node;
 		current = node;
 	}
 	else {
-		node->next = current;
+		node->m_next = current;
 		m_head = node;
 	}
 
@@ -155,7 +158,7 @@ T SinglyLinkedList<T>::pop(std::optional<size_t> index) {
 	}
 
 	if (index == 0) {
-		m_head = current->next;
+		m_head = current->m_next;
 	}
 	else {
 		if (index == std::nullopt) {
@@ -167,14 +170,14 @@ T SinglyLinkedList<T>::pop(std::optional<size_t> index) {
 				break;
 			else {
 				prev = current;
-				current = current->next;
+				current = current->m_next;
 				position += 1;
 			}
 		}
 
-		prev->next = current->next;
+		prev->m_next = current->m_next;
 
-		if (!prev->next)
+		if (!prev->m_next)
 			m_tail = prev;
 	}
 
@@ -193,21 +196,21 @@ void SinglyLinkedList<T>::remove(T data) {
 		if (current->m_data == data) {
 			
 			if (current == m_head)
-				m_head = current->next;
+				m_head = current->m_next;
 
 			else if (current == m_tail) {
-				prev->next = current->next;
+				prev->m_next = current->m_next;
 				m_tail = prev;
 			}
 			else 
-				prev->next = current->next;
+				prev->m_next = current->m_next;
 			
 			--m_size;
 			return;
 		}
 
 		prev = current;
-		current = current->next;
+		current = current->m_next;
 	}
 }
 
@@ -220,19 +223,19 @@ void SinglyLinkedList<T>::remove_all(T data) {
 		if (current->m_data == data) {
 
 			if (current == m_head)
-				m_head = current->next;
+				m_head = current->m_next;
 			else if (current == m_tail) {
-				prev->next = current->next;
+				prev->m_next = current->m_next;
 				m_tail = prev;
 			}
 			else
-				prev->next = current->next;
+				prev->m_next = current->m_next;
 
 			--m_size;
 		}
 
 		prev = current;
-		current = current->next;
+		current = current->m_next;
 	}
 }
 
@@ -248,7 +251,7 @@ T SinglyLinkedList<T>::index(size_t index) {
 		if (position == index)
 			break;
 
-		current = current->next;
+		current = current->m_next;
 		++position;
 	}
 
@@ -263,7 +266,7 @@ int SinglyLinkedList<T>::count(T data) {
 	while (current) {
 		if (current->m_data == data)
 			++cnt;
-		current = current->next;
+		current = current->m_next;
 	}
 
 	return cnt;
@@ -281,4 +284,14 @@ template <typename T>
 size_t SinglyLinkedList<T>::size() {
 
 	return m_size;
+}
+
+template <typename T>
+std::shared_ptr<typename SinglyLinkedList<T>::Node> SinglyLinkedList<T>::head() const {
+	return m_head;
+}
+
+template <typename T>
+std::shared_ptr<typename SinglyLinkedList<T>::Node> SinglyLinkedList<T>::tail() const {
+	return m_tail;
 }

@@ -66,7 +66,7 @@ public:
 	// prefix operator
 	DoublyLinkedList<T>::Iterator& operator++() {
 		if (m_current)
-			m_current = m_current->next;
+			m_current = m_current->m_next;
 
 		return *this;
 	};
@@ -98,7 +98,7 @@ typename DoublyLinkedList<T>::Iterator DoublyLinkedList<T>::begin() {
 template <typename T>
 typename DoublyLinkedList<T>::Iterator DoublyLinkedList<T>::end() {
 
-	return Iterator(m_tail->next);
+	return Iterator(m_tail->m_next);
 }
 
 template <typename T>
@@ -166,7 +166,7 @@ void DoublyLinkedList<T>::append(T data) {
 	}
 	else {
 		node->prev = m_tail;
-		m_tail->next = node;
+		m_tail->m_next = node;
 		m_tail = node;
 	}
 
@@ -187,21 +187,21 @@ void DoublyLinkedList<T>::insert(int index, T data) {
 		}
 		else {
 			prev = current;
-			current = current->next;
+			current = current->m_next;
 			++position;
 		}
 	}
 
 	if (prev) {
-		node->next = current;
+		node->m_next = current;
 		node->prev = prev;
-		prev->next = node;
+		prev->m_next = node;
 		current->prev = node;
 		current = node;
 	}
 	else {
 		current->prev = node;
-		node->next = current;
+		node->m_next = current;
 		m_head = node;
 	}
 
@@ -219,7 +219,7 @@ T DoublyLinkedList<T>::pop(std::optional<size_t> index) {
 	}
 
 	if (index == 0) {
-		m_head = current->next;
+		m_head = current->m_next;
 	}
 	else {
 		if (index == std::nullopt) {
@@ -231,15 +231,15 @@ T DoublyLinkedList<T>::pop(std::optional<size_t> index) {
 				break;
 			else {
 				prev = current;
-				current = current->next;
+				current = current->m_next;
 				position += 1;
 			}
 		}
 
-		prev->next = current->next;
+		prev->m_next = current->m_next;
 
-		if (prev->next)
-			prev->next->prev = prev;
+		if (prev->m_next)
+			prev->m_next->prev = prev;
 		else
 			m_tail = prev;
 	}
@@ -259,16 +259,16 @@ void DoublyLinkedList<T>::remove(T data) {
 		if (current->m_data == data) {
 
 			if (current == m_head) {
-				current->next->prev = prev;
-				m_head = current->next;
+				current->m_next->prev = prev;
+				m_head = current->m_next;
 			}
 			else if (current == m_tail) {
-				prev->next = current->next;
+				prev->m_next = current->m_next;
 				m_tail = prev;
 			}
 			else {
-				current->next->prev = prev;
-				prev->next = current->next;
+				current->m_next->prev = prev;
+				prev->m_next = current->m_next;
 			}
 
 			--m_size;
@@ -276,7 +276,7 @@ void DoublyLinkedList<T>::remove(T data) {
 		}
 
 		prev = current;
-		current = current->next;
+		current = current->m_next;
 	}
 }
 
@@ -289,23 +289,23 @@ void DoublyLinkedList<T>::remove_all(T data) {
 		if (current->m_data == data) {
 
 			if (current == m_head) {
-				current->next->prev = prev;
-				m_head = current->next;
+				current->m_next->prev = prev;
+				m_head = current->m_next;
 			}
 			else if (current == m_tail) {
-				prev->next = current->next;
+				prev->m_next = current->m_next;
 				m_tail = prev;
 			}
 			else {
-				current->next->prev = prev;
-				prev->next = current->next;
+				current->m_next->prev = prev;
+				prev->m_next = current->m_next;
 			}
 
 			--m_size;
 		}
 
 		prev = current;
-		current = current->next;
+		current = current->m_next;
 	}
 }
 
@@ -321,7 +321,7 @@ T DoublyLinkedList<T>::index(size_t index) {
 		if (position == index)
 			break;
 
-		current = current->next;
+		current = current->m_next;
 		++position;
 	}
 
@@ -336,7 +336,7 @@ int DoublyLinkedList<T>::count(T data) {
 	while (current) {
 		if (current->m_data == data)
 			++cnt;
-		current = current->next;
+		current = current->m_next;
 	}
 
 	return cnt;
